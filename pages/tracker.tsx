@@ -4,6 +4,12 @@ import { TleData } from "../models/satellite.model";
 import { getCoordination, getSatrec } from "../helpers/satelliteRec";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import TRACKER_CONSTSNTS from "../constants/trackerConstants";
+import dynamic from 'next/dynamic'
+
+const Map = dynamic(
+  () => import('../components/map'),
+  { ssr: false }
+)
 
 export const getStaticProps: GetStaticProps<{
     tleData: TleData
@@ -13,7 +19,7 @@ export const getStaticProps: GetStaticProps<{
     const res = await fetch(url);
     const tleData = await res.json();
     return { props: { tleData } };
-  }
+}
 
 export default function Tracker({
     tleData
@@ -28,6 +34,7 @@ export default function Tracker({
     
     return (
         <div className="center">
+            <Map />
         </div>
     );
 }
