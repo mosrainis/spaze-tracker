@@ -25,11 +25,7 @@ export default function Map({target}: MapInput) {
                 <Marker
                     position={position}
                     icon={ trackerMarker }
-                >
-                    <Popup>
-                    A pretty CSS3 popup. <br /> Easily customizable.
-                    </Popup>
-                </Marker>
+                />
             </MapContainer>
         </div>
     );
