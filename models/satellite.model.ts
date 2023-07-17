@@ -15,4 +15,9 @@ export interface UTCDate {
     hour: number;
     minute: number;
     second: number;
-  }
+}
+
+export interface SatelliteCoord {
+    lat: number;
+    long: number
+}

@@ -26,7 +26,7 @@ export default function Tracker({
   }: InferGetStaticPropsType<typeof getStaticProps>) {
     const router = useRouter();
     
-    console.log('here mate', getCoordination(getSatrec(tleData)));
+    const satCoordinate = getCoordination(getSatrec(tleData));
 
     useEffect(() => {
         if(!router.isReady) return;
@@ -34,7 +34,7 @@ export default function Tracker({
     
     return (
         <div className="center">
-            <Map />
+            <Map target={satCoordinate}/>
         </div>
     );
 }

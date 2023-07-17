@@ -1,4 +1,4 @@
-import { TleData, CoordOptions } from "../models/satellite.model";
+import { TleData, CoordOptions, SatelliteCoord } from "../models/satellite.model";
 import { twoline2satrec, SatRec, propagate, gstime, eciToGeodetic, EciVec3, degreesLat, degreesLong } from 'satellite.js';
 import { getUTCData } from "./ssatelliteUtils";
 
@@ -6,7 +6,7 @@ export const getSatrec = (tleData: TleData): SatRec => {
     return twoline2satrec(tleData.line1, tleData.line2)
 };
 
-export function getCoordination(satRec: SatRec, options?: CoordOptions) {
+export function getCoordination(satRec: SatRec, options?: CoordOptions): SatelliteCoord {
     const selectedTime = options?.date || new Date();
     const UTCData = getUTCData(selectedTime);
     
