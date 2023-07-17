@@ -1,17 +1,31 @@
 import { useRouter } from "next/router";
 import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet';
+import styles from "../styles/map.module.scss";
+import TRACKER_CONSTSNTS from "../constants/trackerConstants";
+import 'leaflet/dist/leaflet.css';
+import { trackerMarker } from "./mapMarker";
+import { SatelliteCoord } from "../models/satellite.model";
 
-export default function Map() {
+const MAP_URL = `https://{s}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=${TRACKER_CONSTSNTS.MAP_TOKEN}` 
+interface MapInput {
+    target: SatelliteCoord;
+}
+
+export default function Map({target}: MapInput) {
     const router = useRouter();
-    
+    const position: [number, number] = [ target.lat, target.long ];
+
     return (
-        <div className="map-container">
-            <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
+        <div className={styles.mapContainer}>
+            <MapContainer className={styles.mapElement} center={position} zoom={3} scrollWheelZoom={false}>
                 <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; By <a target="_blank" href="https://github.com/mosrainis">Mosrainis</a>'
+                    url={MAP_URL}
                 />
-                <Marker position={[51.505, -0.09]}>
+                <Marker
+                    position={position}
+                    icon={ trackerMarker }
+                >
                     <Popup>
                     A pretty CSS3 popup. <br /> Easily customizable.
                     </Popup>
