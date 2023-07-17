@@ -1,0 +1,14 @@
+.mapContainer {
+  margin: auto;
+  width: 90%;
+  min-width: 200px;
+  height: 50vh;
+  min-height: 400px;
+  max-height: 900px;
+
+  .mapElement {
+    border-radius: 16px;
+    height: 100%;
+    min-height: 100%;
+  }
+}
