@@ -1,5 +1,6 @@
 import {Icon, Point} from 'leaflet';
 import marker from '@/app/icons/iss-icon.png';
+
 const trackerMarker = new Icon({
     iconUrl: marker.src,
     iconRetinaUrl: marker.src,

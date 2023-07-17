@@ -1,12 +1,13 @@
 import { useRouter } from "next/router";
-import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, Marker, Popup, Circle } from 'react-leaflet';
 import styles from "../styles/map.module.scss";
 import TRACKER_CONSTSNTS from "../constants/trackerConstants";
 import 'leaflet/dist/leaflet.css';
-import { trackerMarker } from "./mapMarker";
+import { trackerMarker } from "./mapElements";
 import { SatelliteCoord } from "../models/satellite.model";
 
-const MAP_URL = `https://{s}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=${TRACKER_CONSTSNTS.MAP_TOKEN}` 
+const MAP_URL = `https://{s}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=${TRACKER_CONSTSNTS.MAP_TOKEN}`;
+
 interface MapInput {
     target: SatelliteCoord;
 }
@@ -25,6 +26,10 @@ export default function Map({target}: MapInput) {
                 <Marker
                     position={position}
                     icon={ trackerMarker }
+                />
+                <Circle
+                    center={position}
+                    radius={1000000}
                 />
             </MapContainer>
         </div>
