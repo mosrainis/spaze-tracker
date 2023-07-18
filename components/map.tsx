@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { MapContainer, TileLayer, useMap, Marker, Popup, Circle } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, Marker, Popup, Circle, Polyline } from 'react-leaflet';
 import styles from "../styles/map.module.scss";
 import TRACKER_CONSTSNTS from "../constants/trackerConstants";
 import 'leaflet/dist/leaflet.css';
@@ -10,12 +10,14 @@ const MAP_URL = `https://{s}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.p
 
 interface MapInput {
     target: SatelliteCoord;
+    groundTracks: any
 }
 
-export default function Map({target}: MapInput) {
+export default function Map({target, groundTracks}: MapInput) {
     const router = useRouter();
     const position: [number, number] = [ target.lat, target.long ];
-
+    console.log('groundTracks', groundTracks);
+    
     return (
         <div className={styles.mapContainer}>
             <MapContainer className={styles.mapElement} center={position} zoom={3} scrollWheelZoom={false}>
@@ -31,6 +33,8 @@ export default function Map({target}: MapInput) {
                     center={position}
                     radius={1000000}
                 />
+                <Polyline positions={groundTracks.type1} />
+                <Polyline positions={groundTracks.type2} />
             </MapContainer>
         </div>
     );

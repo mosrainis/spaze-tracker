@@ -5,6 +5,7 @@ import { getCoordination, getSatrec } from "../helpers/satelliteRec";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import TRACKER_CONSTSNTS from "../constants/trackerConstants";
 import dynamic from 'next/dynamic'
+import { drawOrbit } from "../helpers/mapCalc";
 
 const Map = dynamic(
   () => import('../components/map'),
@@ -26,7 +27,10 @@ export default function Tracker({
   }: InferGetStaticPropsType<typeof getStaticProps>) {
     const router = useRouter();
     const satRec = getSatrec(tleData);
+    const groundTracks = drawOrbit({satRec, startTimeMS: new Date().getTime()})
+
     const [satelliteCoord, seCoordinate] = useState<SatelliteCoord | undefined>(undefined);
+
 
     const setCoord = () => {
       seCoordinate(getCoordination(satRec));
@@ -43,7 +47,7 @@ export default function Tracker({
     
     return (
         <div className="center">
-            {satelliteCoord && <Map target={satelliteCoord}/>}
+            {satelliteCoord && <Map target={satelliteCoord} groundTracks={groundTracks}/>}
         </div>
     );
 }
