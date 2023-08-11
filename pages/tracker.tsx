@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { TleData, SatelliteCoord } from "../models/satellite.model";
 import { getCoordination, getSatrec } from "../helpers/satelliteRec";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
@@ -26,7 +26,7 @@ export default function Tracker({
     tleData
   }: InferGetStaticPropsType<typeof getStaticProps>) {
     const router = useRouter();
-    const satRec = getSatrec(tleData);
+    const satRec = useMemo(() => getSatrec(tleData), [tleData]);
     const groundTracks = drawOrbit({satRec, startTimeMS: new Date().getTime()})
 
     const [satelliteCoord, seCoordinate] = useState<SatelliteCoord | undefined>(undefined);
@@ -39,9 +39,9 @@ export default function Tracker({
     useEffect(() => {
         if(!router.isReady) return;
         setCoord();
-        const interval = setInterval(() => {
-          setCoord();
-        }, TRACKER_CONSTSNTS.LIVE_REFRESH_MS);
+        console.log('here inside');
+        
+        const interval = setInterval(setCoord, TRACKER_CONSTSNTS.LIVE_REFRESH_MS);
         return () => clearInterval(interval);
     }, [router.isReady])
     
