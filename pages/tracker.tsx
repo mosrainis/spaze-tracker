@@ -27,7 +27,9 @@ export default function Tracker({
   }: InferGetStaticPropsType<typeof getStaticProps>) {
     const router = useRouter();
     const satRec = useMemo(() => getSatrec(tleData), [tleData]);
-    const groundTracks = drawOrbit({satRec, startTimeMS: new Date().getTime()})
+    const pastGroundTracks = drawOrbit({satRec, startTimeMS: new Date().getTime(), incoming: false});
+    const incomingGroundTracks = drawOrbit({satRec, startTimeMS: new Date().getTime(), incoming: true});
+
 
     const [satelliteCoord, seCoordinate] = useState<SatelliteCoord | undefined>(undefined);
 
@@ -39,15 +41,18 @@ export default function Tracker({
     useEffect(() => {
         if(!router.isReady) return;
         setCoord();
-        console.log('here inside');
-        
+
         const interval = setInterval(setCoord, TRACKER_CONSTSNTS.LIVE_REFRESH_MS);
         return () => clearInterval(interval);
     }, [router.isReady])
     
     return (
-        <div className="center">
-            {satelliteCoord && <Map target={satelliteCoord} groundTracks={groundTracks}/>}
-        </div>
+      <div className="center">
+        {satelliteCoord && <Map 
+          target={satelliteCoord}
+          incomingGroundTracks={incomingGroundTracks}
+          pastGroundTracks={pastGroundTracks}
+        />}
+      </div>
     );
 }

@@ -10,20 +10,21 @@ const MAP_URL = `https://{s}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.p
 
 interface MapInput {
     target: SatelliteCoord;
-    groundTracks: any
+    incomingGroundTracks: any;
+    pastGroundTracks: any;
 }
 
-export default function Map({target, groundTracks}: MapInput) {
+export default function Map({target, incomingGroundTracks, pastGroundTracks}: MapInput) {
     const router = useRouter();
     const position: [number, number] = [ target.lat, target.long ];
-    console.log('groundTracks', groundTracks);
     
     return (
         <div className={styles.mapContainer}>
-            <MapContainer className={styles.mapElement} center={position} zoom={3} scrollWheelZoom={false}>
+            <MapContainer className={styles.mapElement} center={position} zoom={3} scrollWheelZoom={true}>
                 <TileLayer
                     attribution='&copy; By <a target="_blank" href="https://github.com/mosrainis">Mosrainis</a>'
                     url={MAP_URL}
+                    // noWrap={true}
                 />
                 <Marker
                     position={position}
@@ -33,8 +34,13 @@ export default function Map({target, groundTracks}: MapInput) {
                     center={position}
                     radius={1000000}
                 />
-                <Polyline positions={groundTracks.type1} />
-                <Polyline positions={groundTracks.type2} />
+
+                <Polyline positions={incomingGroundTracks.type1} />
+                <Polyline positions={incomingGroundTracks.type2} />
+
+                <Polyline positions={pastGroundTracks.type1} color="red"/>
+                <Polyline positions={pastGroundTracks.type2} color="red"/>
+
             </MapContainer>
         </div>
     );
