@@ -22,10 +22,10 @@ export default function TrackerLayout({
     
     const contentStyle: React.CSSProperties = {
         textAlign: 'center',
-        minHeight: 120,
+        minHeight: '93.1vh',
         lineHeight: '120px',
         color: '#fff',
-        backgroundColor: '#108ee9',
+        backgroundColor: '#fff',
     };
     
     const footerStyle: React.CSSProperties = {

@@ -2,9 +2,9 @@ import { TleData } from "../../models/satellite.model";
 import { getSatrec } from "../../helpers/satelliteRec";
 import TRACKER_CONSTSNTS from "../../constants/trackerConstants";
 import dynamic from 'next/dynamic'
-import { drawOrbit } from "../../helpers/mapCalc";
 
-import { Space } from 'antd';
+import { Row, Col } from 'antd';
+import Settings from "../components/settingsSection";
 
 const Map = dynamic(
   () => import('../components/map'),
@@ -26,10 +26,15 @@ export default async function Tracker() {
   const satRec = getSatrec(tleData);
   
   return (
-    <Space direction="vertical" style={{ width: '100%' }} size={[0, 48]}>
-      <Map 
-        satRec={satRec}
-      />
-    </Space>
+    <Row>
+      <Col flex="300px">
+        <Settings/>
+      </Col>
+      <Col flex="auto">
+        <Map 
+          satRec={satRec}
+        />
+      </Col>
+    </Row>
   );
 }
