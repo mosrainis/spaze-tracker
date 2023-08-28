@@ -9,6 +9,7 @@ import DebounceSelect from "./UI/debounceSelect";
 import { useState } from "react";
 import { Location, ReferencePosition } from "../../models/locations.model";
 import { icon } from "leaflet";
+import { selectLocation } from "../../helpers/observeCalc";
 const { Text } = Typography;
 
 interface LocationValue {
@@ -51,6 +52,10 @@ async function fetchLocationList(text: string): Promise<LocationValue[]> {
 
 export default function Settings() {
     const [userLocation, setUserLocation] = useState<any>();
+
+    const startMagic = () => {
+        selectLocation(userLocation, new Date());
+    }
     
     return (
         <>
@@ -109,7 +114,7 @@ export default function Settings() {
                         Submit
                     </Button> */}
 
-                    <Button type="primary" shape="round" icon={<SlidersFilled />} size={'large'}>
+                    <Button onClick={startMagic} type="primary" shape="round" icon={<SlidersFilled />} size={'large'}>
                         Start Magic
                     </Button>
                     </Form.Item>

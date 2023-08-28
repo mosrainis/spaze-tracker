@@ -4,8 +4,7 @@ export interface TleData {
 }
 
 export interface CoordOptions {
-    date?: Date,
-    sighting?: boolean
+    date?: Date
 }
 
 export interface UTCDate {
