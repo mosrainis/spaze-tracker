@@ -41,10 +41,10 @@ async function fetchLocationList(text: string): Promise<LocationValue[]> {
     return new Promise<any>((resolve) => {
         resolve([{
             // label: `Iran Tehran`,
-            value: 'Iran Tehran',
+            value: 'Tehran, Iran',
             data: {
-                "latitude": 37.40966033935547,
-                "longitude": 49.953861236572266
+                "latitude": 35.7219,
+                "longitude": 51.3347
             }
         }]);
     });
@@ -54,7 +54,7 @@ export default function Settings() {
     const [userLocation, setUserLocation] = useState<any>();
 
     const startMagic = () => {
-        selectLocation(userLocation, new Date());
+        selectLocation(userLocation.data, new Date());
     }
     
     return (

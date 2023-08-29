@@ -5,11 +5,15 @@ import dynamic from 'next/dynamic'
 
 import { Row, Col } from 'antd';
 import Settings from "../components/settingsSection";
+import { createContext } from "react";
+import { SatRec } from "satellite.js";
 
 const Map = dynamic(
   () => import('../components/map'),
   { ssr: false }
 )
+
+const satrecContext = createContext<SatRec>({} as SatRec);
 
 async function getTleData(): Promise<TleData> {
   const { ISS_TLE } = TRACKER_CONSTSNTS;
@@ -26,15 +30,17 @@ export default async function Tracker() {
   const satRec = getSatrec(tleData);
   
   return (
-    <Row>
-      <Col flex="300px">
-        <Settings/>
-      </Col>
-      <Col flex="auto">
-        <Map 
-          satRec={satRec}
-        />
-      </Col>
-    </Row>
+    <satrecContext.Provider value={satRec}>
+      <Row>
+        <Col flex="300px">
+          <Settings/>
+        </Col>
+        <Col flex="auto">
+          <Map 
+            satRec={satRec}
+          />
+        </Col>
+      </Row>
+    </satrecContext.Provider >
   );
 }

@@ -1,46 +1,45 @@
 import TRACKER_CONSTSNTS from "../constants/trackerConstants";
 import { ReferencePosition } from "../models/locations.model";
-import { getTimes,  } from 'suncalc';
+import { getTimes } from 'suncalc';
+import { getCoordination, getSatrec } from "./satelliteRec";
 
-interface sunCalcResult { dusk: Date, dawn: Date };
+interface ObserveDateRange { start: Date, end: Date };
 
 export function selectLocation(observeCoords: ReferencePosition, date: Date) {
-    let observeRange: sunCalcResult;
-    
-    for (let i = 0; i < TRACKER_CONSTSNTS.OBSERVE_RANGE_DAY; i++) {
-      observeRange = calcSunTime(observeCoords.latitude, observeCoords.longitude, date);
-      date.setDate(date.getDate() + 1);  
-    //   console.log('observeRange', i, observeRange);
-          
-    //   calcLocalSatPos(observeRange);
-    }
+  let observeRange: ObserveDateRange;
+
+  for (let i = 0; i < TRACKER_CONSTSNTS.OBSERVE_RANGE_DAY; i++) {
+    observeRange = calcSunTime(observeCoords.latitude, observeCoords.longitude, date);
+    date.setDate(date.getDate() + 1);  
+        
+    // calcLocalSatPos(observeRange);
+  }
 
 }
 
-function calcSunTime(siteLat: number, siteLong: number, date: Date): sunCalcResult {
-    const dayAfter = new Date(date.getTime());
-    dayAfter.setDate(dayAfter.getDate() + 1);   
-    console.log(`today: ${date} and tomorrow: ${dayAfter}`);
-    
-    const sunTime = getTimes(date, siteLat, siteLong);
-    const sunTimeDayAfter = getTimes(dayAfter, siteLat, siteLong);
-    
-    return {
-      dusk: sunTime.dusk,
-      dawn: sunTimeDayAfter.dawn
-    };
+function calcSunTime(siteLat: number, siteLong: number, date: Date): ObserveDateRange {
+  const dayAfter = new Date(date.getTime());
+  dayAfter.setDate(dayAfter.getDate() + 1);   
 
-    // for (let i = 0; i < this.numberOfPoints; i++) {
-    //   satPos = this.convertTLE(currentTime);
-    //   if satPos[]
-    //   currentTime += dt;
-    // }
+  const sunTime = getTimes(date, siteLat, siteLong);
+  const sunTimeDayAfter = getTimes(dayAfter, siteLat, siteLong);
+  
+  return {
+    start: sunTime.dusk,
+    end: sunTimeDayAfter.dawn
+  };
+
+  // for (let i = 0; i < this.numberOfPoints; i++) {
+  //   satPos = this.convertTLE(currentTime);
+  //   if satPos[]
+  //   currentTime += dt;
+  // }
 }
 
-// function calcLocalSatPos(localRange: sunCalcResult) {    
-//     const dt = Math.trunc((localRange.dawn.getTime() - localRange.dusk.getTime()) / 450);
+// function calcLocalSatPos(observeRange: ObserveDateRange) {    
+//     const dt = Math.trunc((observeRange.end.getTime() - observeRange.start.getTime()) / 450);
 //     let innerDt: number = 1000;
-//     let currentTime = localRange.dusk.getTime();
+//     let currentTime = observeRange.start.getTime();
 //     let currentSatData: any;
 //     let maxElevation: number = 0;
 //     let maxRange: number = 0;
@@ -55,8 +54,8 @@ function calcSunTime(siteLat: number, siteLong: number, date: Date): sunCalcResu
 //     let sightingData = [];
     
 //     // Set the loop range from 'dusk' to 'dawn' 
-//     while (currentTime < localRange.dawn.getTime()) {
-//       currentSatData = this.convertTLE(true, currentTime);
+//     while (currentTime < observeRange.end.getTime()) {
+//       currentSatData = getCoordination();
 //       // console.log(`======||||||||||||||=======${currentSatData[2].localTime}==(elv : ${currentSatData[2].elevation})=====|||||||||||||===========`);
 //       // Check if satellite if It's above the observer horizon (10 degree above horizon)
 //       if (currentSatData.satInfo.elevation > 10) {
