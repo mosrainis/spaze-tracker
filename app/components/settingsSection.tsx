@@ -6,10 +6,11 @@ import { InfoCircleOutlined, SlidersFilled } from '@ant-design/icons';
 import Avatar from "antd/es/avatar/avatar";
 import Input from "antd/es/input/Input";
 import DebounceSelect from "./UI/debounceSelect";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Location, ReferencePosition } from "../../models/locations.model";
 import { icon } from "leaflet";
 import { selectLocation } from "../../helpers/observeCalc";
+import satrecContext from "../../contexts/satellite.context";
 const { Text } = Typography;
 
 interface LocationValue {
@@ -52,9 +53,10 @@ async function fetchLocationList(text: string): Promise<LocationValue[]> {
 
 export default function Settings() {
     const [userLocation, setUserLocation] = useState<any>();
-
+    const satrec = useContext(satrecContext);
+    
     const startMagic = () => {
-        selectLocation(userLocation.data, new Date());
+        selectLocation(satrec, userLocation.data, new Date());
     }
     
     return (
