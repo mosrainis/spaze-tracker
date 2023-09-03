@@ -1,10 +1,14 @@
+import { ReferencePosition } from "./locations.model";
+
 export interface TleData {
     line1: string;
     line2: string
 }
 
 export interface CoordOptions {
-    date?: Date
+    date?: Date;
+    sighting?: boolean;
+    sightingData?: ReferencePosition 
 }
 
 export interface UTCDate {
@@ -19,4 +23,21 @@ export interface UTCDate {
 export interface SatelliteCoord {
     lat: number;
     long: number;
+    satInfo?: SatInfo,
+    satXYZ?: Location
+}
+
+export interface SatInfo {
+    localTime: Date,
+    time: String,
+    azimuth: number,
+    elevation: number,
+    range: number,
+    height: number
+}
+
+export interface Location {
+    x: number;
+    y: number;
+    z: number;
 }
