@@ -275,7 +275,7 @@ function calcMagnitude(phaseAngle: any, satRange: number) {
 }
 
 function submitSighting(data: SatelliteCoord[], elv: number, range: number) {
-  console.log(data);
+  console.log(data, data[0].satInfo?.localTime, data[0].satInfo?.time, '->', data[2].satInfo?.time);
   
   // const opp: {
   //   "startingTime": Date;
