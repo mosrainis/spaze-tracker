@@ -8,13 +8,8 @@ export const getSatrec = (tleData: TleData): SatRec => {
 };
 
 export function getCoordination(satRec: SatRec, options?: CoordOptions): SatelliteCoord {
-  const selectedTime = options?.date || new Date();
-  const UTCData = getUTCData(selectedTime);
-  
-  const positionAndVelocity = propagate(satRec, selectedTime);
-
-  const positionEci = positionAndVelocity.position as EciVec3<number>;
-  const velocityEci = positionAndVelocity.velocity;
+  const selectedDate = options?.date || new Date();  
+  const UTCData = getUTCData(selectedDate);
 
   const gmst = gstime(
     UTCData.year,
@@ -24,6 +19,12 @@ export function getCoordination(satRec: SatRec, options?: CoordOptions): Satelli
     UTCData.minute,
     UTCData.second
   );
+  
+  const positionAndVelocity = propagate(satRec, selectedDate);
+  
+  const positionEci = positionAndVelocity.position as EciVec3<number>;
+  const velocityEci = positionAndVelocity.velocity;
+
 
   const positionGd = eciToGeodetic(positionEci, gmst);
 
@@ -31,7 +32,7 @@ export function getCoordination(satRec: SatRec, options?: CoordOptions): Satelli
   latitude = positionGd.latitude;
 
   return options?.sighting && options.sightingData
-    ? getSightingData(options.sightingData, positionEci, gmst, positionGd, options.date)
+    ? getSightingData(options.sightingData, positionEci, gmst, positionGd, selectedDate)
     : {
       lat: degreesLat(latitude),
       long: degreesLong(longitude)
