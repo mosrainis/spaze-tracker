@@ -4,8 +4,7 @@ import TRACKER_CONSTSNTS from "../../constants/trackerConstants";
 import InPage from "./page.index";
 
 async function getTleData(): Promise<TleData> {
-  const { ISS_TLE } = TRACKER_CONSTSNTS;
-  const url = (ISS_TLE);
+  const url = (TRACKER_CONSTSNTS.ISS_TLE);
   const res = await fetch(url, {cache: "force-cache"});
   if (!res.ok) {
     throw new Error('Failed to fetch data')
@@ -14,7 +13,8 @@ async function getTleData(): Promise<TleData> {
 }
 
 export default async function Tracker() {
-  const tleData = await getTleData();
+  // const tleData = await getTleData();
+  const tleData = {line1: TRACKER_CONSTSNTS.TLE_LINE1, line2: TRACKER_CONSTSNTS.TLE_LINE2}; // Convert this to API
   const satRec = getSatrec(tleData);
   
   return (
