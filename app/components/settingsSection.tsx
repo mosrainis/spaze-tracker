@@ -2,15 +2,17 @@
 import { Menu, Space, Form, Button, Tooltip, Typography, Empty } from "antd";
 import Card from "antd/es/card/Card";
 import Meta from "antd/es/card/Meta";
-import { InfoCircleOutlined, SlidersFilled } from '@ant-design/icons';
+import { InfoCircleOutlined, SlidersFilled, EditOutlined } from '@ant-design/icons';
 import Avatar from "antd/es/avatar/avatar";
 import Input from "antd/es/input/Input";
 import DebounceSelect from "./UI/debounceSelect";
-import { useState, useContext } from "react";
+import { useState, useContext, SetStateAction, useRef } from "react";
 import { Location, ReferencePosition } from "../../models/locations.model";
 import { icon } from "leaflet";
-import { selectLocation } from "../../helpers/observeCalc";
+import { getSightings } from "../../helpers/observeCalc";
 import satrecContext from "../../contexts/satellite.context";
+import { Sighting } from "../../models/satellite.model";
+import SightingSection from "./sightingSection";
 const { Text } = Typography;
 
 interface LocationValue {
@@ -47,18 +49,28 @@ async function fetchLocationList(text: string): Promise<LocationValue[]> {
                 "latitude": 35.7219,
                 "longitude": 51.3347
             }
-        }]);
+        }
+    ]);
     });
 }
 
 export default function Settings() {
-    const [userLocation, setUserLocation] = useState<any>();
+    const [userLocation, setUserLocation] = useState<LocationValue>();
+    const [sightings, setSightings] = useState<Sighting[]>();
     const satrec = useContext(satrecContext);
+    const locationInput = useRef(null);
     
     const startMagic = () => {
-        selectLocation(satrec, userLocation.data, new Date());
+        if(!userLocation?.data) return;
+        const sightings = getSightings(satrec, userLocation.data, new Date());
+        setSightings(sightings);
     }
-    
+
+    const editLocation = () => {
+        setUserLocation(undefined);
+        setSightings(undefined);
+    }
+
     return (
         <>
             <Card
@@ -90,8 +102,7 @@ export default function Settings() {
                             placeholder="Enter your location"
                             fetchOptions={fetchLocationList}
                             onSelect={(newValue, option) => {
-                                console.log(newValue, option);
-                                setUserLocation(option);
+                                setUserLocation(option as SetStateAction<LocationValue | undefined>);
                             }}
                             style={{ width: '100%' }}
                             suffixIcon={
@@ -104,9 +115,15 @@ export default function Settings() {
                     {
                         userLocation ? (
                             <Space direction="vertical" align="start" style={{width: '100%'}}>
-                                <Text italic>You are here:</Text>
-                                <Text type="secondary">- Latitude : {userLocation.data.latitude.toFixed(3)}</Text>
-                                <Text type="secondary">- Longitude : {userLocation.data.longitude.toFixed(3)}</Text>
+                                <Text italic>
+                                    You are at {userLocation.value}
+                                    <Space style={{marginLeft: '6px'}}>
+                                    <Tooltip title="Change location">
+                                        <Button onClick={editLocation} type="dashed" shape="circle" icon={<EditOutlined />} />
+                                    </Tooltip>
+                                    </Space>
+                                </Text>
+                                <Text type="secondary">Lat: {userLocation.data?.latitude.toFixed(3)} | Long: {userLocation.data?.longitude.toFixed(3)}</Text>
                             </Space>  
                         ) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}  imageStyle={{ marginBottom: '30px' }}/>
                     }
@@ -116,9 +133,15 @@ export default function Settings() {
                         Submit
                     </Button> */}
 
-                    <Button onClick={startMagic} type="primary" shape="round" icon={<SlidersFilled />} size={'large'}>
-                        Start Magic
-                    </Button>
+                    {
+                        userLocation &&
+                            <Space style={{marginTop: '16px'}}>
+                                { 
+                                    sightings ? <SightingSection sightings={sightings} />
+                                    : <Button onClick={startMagic} type="primary" shape="round" icon={<SlidersFilled />} size={'large'}>Start Magic</Button>
+                                }
+                            </Space>
+                    }
                     </Form.Item>
                 </Form>
                 </Space>
