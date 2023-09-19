@@ -41,3 +41,10 @@ export interface Location {
     y: number;
     z: number;
 }
+
+export interface Sighting {
+    startingTime: Date;
+    maxElv: number;
+    mag: number;
+    sightingData: SatelliteCoord[]
+}
