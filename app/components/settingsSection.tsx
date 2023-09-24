@@ -46,8 +46,8 @@ async function fetchLocationList(text: string): Promise<LocationValue[]> {
             // label: `Iran Tehran`,
             value: 'Tehran, Iran',
             data: {
-                "latitude": 35.7219,
-                "longitude": 51.3347
+                "latitude": 35.689,
+                "longitude": 51.390
             }
         }
     ]);
@@ -62,7 +62,7 @@ export default function Settings() {
     
     const startMagic = () => {
         if(!userLocation?.data) return;
-        const sightings = getSightings(satrec, userLocation.data, new Date());
+        const sightings = getSightings(satrec, userLocation.data);
         setSightings(sightings);
     }
 
