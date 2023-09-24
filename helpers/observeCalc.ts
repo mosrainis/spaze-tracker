@@ -13,14 +13,16 @@ const tau = 2 * Math.PI;
 const RAD2DEG = 360 / tau;
 const DEG2RAD = tau / 360;
 
-export function getSightings(satrec: SatRec, observeCoords: ReferencePosition, date: Date): Sighting[] {
+export function getSightings(satrec: SatRec, observeCoords: ReferencePosition): Sighting[] {
+  let date = new Date();
   let sightings: any = [];
   let observeRange: ObserveDateRange;
-
+  
   for (let i = 0; i < TRACKER_CONSTSNTS.OBSERVE_RANGE_DAY; i++) {
     observeRange = calcSunTime(observeCoords.latitude, observeCoords.longitude, date);
     date.setDate(date.getDate() + 1);
     const opp = calcLocalSatPos(satrec, observeRange, observeCoords);
+    console.log(opp);
     if(opp) {sightings.push(opp);}
   }
 
@@ -33,7 +35,7 @@ function calcSunTime(siteLat: number, siteLong: number, date: Date): ObserveDate
 
   const sunTime = getTimes(date, siteLat, siteLong);
   const sunTimeDayAfter = getTimes(dayAfter, siteLat, siteLong);
-  
+
   return {
     start: sunTime.dusk,
     end: sunTimeDayAfter.dawn
@@ -71,6 +73,7 @@ function calcLocalSatPos(satrec: SatRec, observeRange: ObserveDateRange, observe
     });
 
     if(!currentSatData || !currentSatData.satInfo) return;
+
     // console.log(`======||||||||||||||=======${currentSatData[2].localTime}==(elv : ${currentSatData[2].elevation})=====|||||||||||||===========`);
     // Check if satellite if It's above the observer horizon (10 degree above horizon)
     if (currentSatData.satInfo.elevation > 10) {
@@ -102,7 +105,7 @@ function calcLocalSatPos(satrec: SatRec, observeRange: ObserveDateRange, observe
             
             if (sighting.length == 0 && isSunlit(currentSatData)) {
               // console.log(`ok catch the FIRST sighting`);
-              sighting.push(currentSatData);
+              sighting.push(currentSatData);              
             }
             // Set the max elevation to whatever is more than previous max value
             if (sighting.length != 0 ) {
@@ -120,6 +123,7 @@ function calcLocalSatPos(satrec: SatRec, observeRange: ObserveDateRange, observe
                 // console.log(`ok catch MAX as LAST -- BREAK`);
                 sighting.push(currentSatData);
                 sightingOpp = submitSighting(sighting, maxElevation, maxRange);
+                
                 sighting = [];
                 maxElevation = 0;
                 maxRange = 0
@@ -132,7 +136,7 @@ function calcLocalSatPos(satrec: SatRec, observeRange: ObserveDateRange, observe
           else if (sighting.length != 0 && (currentSatData.satInfo.elevation < 10 || innerRangeMarker+innerDt>maxInnerRange)) {
             // console.log(`NOT ok elv is LESS more than 10 -- PUSH TO SIGHTINGOPP`);
             sighting.push(currentSatData);              
-            sightingOpp = submitSighting(sighting, maxElevation, maxRange);              
+            sightingOpp = submitSighting(sighting, maxElevation, maxRange);
             maxElevation = 0;
             maxRange = 0;
             sighting = [];
@@ -148,6 +152,8 @@ function calcLocalSatPos(satrec: SatRec, observeRange: ObserveDateRange, observe
     }
     currentTime += dt;
   }
+  // console.log('sightingOpp', sightingOpp);
+  
   return sightingOpp;
 }
 
@@ -278,12 +284,13 @@ function calcMagnitude(phaseAngle: any, satRange: number) {
 function submitSighting(data: SatelliteCoord[], elv: number, range: number): Sighting {
 
   
-  // const sighting = [
-  //   [data[0].satInfo?.localTime, data[0].satInfo?.localTime],
-  //   [data[0].satInfo?.time, data[2].satInfo?.time],
-  //   [data[0].satInfo?.elevation, data[0].satInfo?.azimuth]
-  // ];
+  const sighting = [
+    [data[0].satInfo?.localTime, `Lat: ${data[0].lat} - Long: ${data[0].long}`],
+    [data[0].satInfo?.time, data[2].satInfo?.time],
+    [`Azimuth: ${data[0].satInfo?.azimuth} --> ${data[2].satInfo?.azimuth}`, `Elevation: ${data[0].satInfo?.elevation} --> ${data[2].satInfo?.elevation}`]
+  ];
 
+  console.table(sighting);
   return {
     startingTime: data[0].satInfo.localTime,
     maxElv: elv,
