@@ -4,6 +4,7 @@ const { Text } = Typography;
 
 import { Sighting } from "../../models/satellite.model";
 import { RiseOutlined } from '@ant-design/icons';
+import SightingDetail from "./sightingDetail";
 
 interface SightingInput {
     sightings: Sighting[];
@@ -22,12 +23,16 @@ export default function SightingSection({sightings}: SightingInput) {
             <Divider />
             <Text italic>Look up ! You have {sightings.length} opportunity to spot ISS in your sky.</Text>
             <Divider />
-            <Space direction="vertical">
+            <Space direction="vertical" style={{width: '100%'}}>
                 {
-                    sightings.map((v, i) => 
-                        <Space key={`sighting-${i}`}>
+                    sightings.map((item, i) => 
+                        <Space key={`sighting-${i}`} style={{width: '100%', justifyContent: 'space-between'}} >
                             <RiseOutlined />
-                    <Text>{i} - { v.startingTime.toISOString().split('T')[0]} - {v.startingTime.toTimeString().split(' ')[0]}</Text>
+                            <Space direction="vertical">
+                                <Text>{ item.startingTime.toISOString().split('T')[0]}</Text>
+                                <Text>{item.startingTime.toTimeString().split(' ')[0]}</Text>
+                            </Space>
+                            <SightingDetail data={item}/>
                         </Space>
                     )
                 }

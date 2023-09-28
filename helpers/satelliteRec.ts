@@ -1,6 +1,6 @@
 import { TleData, CoordOptions, SatelliteCoord } from "../models/satellite.model";
 import { twoline2satrec, SatRec, propagate, gstime, eciToGeodetic, EciVec3, degreesLat, degreesLong, GeodeticLocation, eciToEcf, degreesToRadians, ecfToLookAngles } from 'satellite.js';
-import { getUTCData } from "./ssatelliteUtils";
+import { getUTCData } from "./satelliteUtils";
 import { ReferencePosition } from "../models/locations.model";
 
 export const getSatrec = (tleData: TleData): SatRec => {

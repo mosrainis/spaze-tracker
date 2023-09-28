@@ -5,6 +5,7 @@ import { getCoordination, getSatrec } from "./satelliteRec";
 import { SatRec, gstime, jday, ecfToEci, geodeticToEcf, degreesToRadians } from "satellite.js";
 import { SatelliteCoord, Sighting } from "../models/satellite.model";
 import { dot } from 'mathjs';
+import { getDuration } from "./satelliteUtils";
 
 declare const A: any; //From meeujs lib
 interface ObserveDateRange { start: Date, end: Date };
@@ -294,6 +295,10 @@ function submitSighting(data: SatelliteCoord[], elv: number, range: number): Sig
   return {
     startingTime: data[0].satInfo.localTime,
     maxElv: elv,
+    duration: getDuration(
+      data[0].satInfo?.localTime,
+      data[2].satInfo?.localTime
+    ),
     mag: calcMagnitude(
       isSunlit(
         data[0],

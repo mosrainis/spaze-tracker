@@ -45,6 +45,7 @@ export interface Location {
 export interface Sighting {
     startingTime: Date;
     maxElv: number;
+    duration: String;
     mag: number;
     sightingData: SatelliteCoord[]
 }
