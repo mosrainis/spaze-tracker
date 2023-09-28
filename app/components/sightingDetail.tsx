@@ -1,9 +1,10 @@
 'use client';
 
 import { Button, Modal, Row, Col, Space, Typography } from "antd";
-const { Text } = Typography;
-import { useState } from "react";
+const { Text, Title } = Typography;
+import { useState, useEffect } from "react";
 import { Sighting } from "../../models/satellite.model";
+import { millisecondsToFormattedTime } from "../../helpers/satelliteUtils";
 
 interface SightingDetailInput {
     data: Sighting
@@ -15,7 +16,28 @@ interface InfoItemInput {
 }
 
 export default function SightingDetail({data}: SightingDetailInput) {
-    console.log('data', data);
+    const [countdown, setCountdown] = useState('');
+
+    useEffect(() => {
+        if(!data) return;
+        const updateCountdown = () => {
+          const currentDate = new Date();
+          const currentTime = currentDate.getTime();
+          const timeDifference = data.sightingData[2].satInfo?.localTime.getTime() - currentTime;
+    
+          if (timeDifference <= 0) {
+            setCountdown('Already Passed');
+          } else {
+            const formattedCountdown = millisecondsToFormattedTime(timeDifference);
+            setCountdown(formattedCountdown);
+          }
+        };
+    
+        const intervalId = setInterval(updateCountdown, 1000);
+    
+        // Cleanup the interval when the component unmounts
+        return () => clearInterval(intervalId);
+    }, [data]);
 
     const title = `Sighting at ${data.startingTime.toISOString().split('T')[0]}`;
     
@@ -39,6 +61,11 @@ export default function SightingDetail({data}: SightingDetailInput) {
                 Details
             </Button>
             <Modal title={title} open={isModalOpen} onOk={handleOk} footer={null} onCancel={handleCancel}>
+                <Row>
+                    <Title type="secondary" level={5} style={{ margin: 0 }}>
+                       {countdown}
+                    </Title>
+                </Row>
                 <Row gutter={[16, 16]} style={{marginBottom: 20}}>
                     <Col span={8} style={{textAlign: 'center'}}>
                         <InfoItem
