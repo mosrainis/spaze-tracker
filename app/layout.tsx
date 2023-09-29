@@ -17,16 +17,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script src="/meeujs/Astro.js"></script>
-        <script src="/meeujs/Astro.Coord.js"></script>
-        <script src="/meeujs/Astro.DeltaT.js"></script>
-        <script src="/meeujs/Astro.Globe.js"></script>
-        <script src="/meeujs/Astro.JulianDay.js"></script>
-        <script src="/meeujs/Astro.Math.js"></script>
-        <script src="/meeujs/Astro.Nutation.js"></script>
-        <script src="/meeujs/Astro.Parallax.js"></script>
-        <script src="/meeujs/Astro.Sidereal.js"></script>
-        <script src="/meeujs/Astro.Solar.js"></script> 
+        <script src="/meeujs/Astro.js" defer></script>
+        <script src="/meeujs/Astro.Coord.js" defer></script>
+        <script src="/meeujs/Astro.DeltaT.js" defer></script>
+        <script src="/meeujs/Astro.Globe.js" defer></script>
+        <script src="/meeujs/Astro.JulianDay.js" defer></script>
+        <script src="/meeujs/Astro.Math.js" defer></script>
+        <script src="/meeujs/Astro.Nutation.js" defer></script>
+        <script src="/meeujs/Astro.Parallax.js" defer></script>
+        <script src="/meeujs/Astro.Sidereal.js" defer></script>
+        <script src="/meeujs/Astro.Solar.js" defer></script> 
       </head>
       <body className={inter.className}>
         <StyledComponentsRegistry>{children}</StyledComponentsRegistry>  

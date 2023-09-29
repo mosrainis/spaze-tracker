@@ -43,7 +43,7 @@ export interface Location {
 }
 
 export interface Sighting {
-    startingTime: Date;
+    startingTime: any;
     maxElv: number;
     duration: String;
     mag: number;

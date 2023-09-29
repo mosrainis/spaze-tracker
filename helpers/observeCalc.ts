@@ -23,7 +23,6 @@ export function getSightings(satrec: SatRec, observeCoords: ReferencePosition): 
     observeRange = calcSunTime(observeCoords.latitude, observeCoords.longitude, date);
     date.setDate(date.getDate() + 1);
     const opp = calcLocalSatPos(satrec, observeRange, observeCoords);
-    console.log(opp);
     if(opp) {sightings.push(opp);}
   }
 
@@ -283,7 +282,6 @@ function calcMagnitude(phaseAngle: any, satRange: number) {
 }
 
 function submitSighting(data: SatelliteCoord[], elv: number, range: number): Sighting {
-
   
   const sighting = [
     [data[0].satInfo?.localTime, `Lat: ${data[0].lat} - Long: ${data[0].long}`],
@@ -293,7 +291,7 @@ function submitSighting(data: SatelliteCoord[], elv: number, range: number): Sig
 
   console.table(sighting);
   return {
-    startingTime: data[0].satInfo.localTime,
+    startingTime: data[0].satInfo?.localTime,
     maxElv: elv,
     duration: getDuration(
       data[0].satInfo?.localTime,

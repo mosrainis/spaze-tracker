@@ -20,10 +20,13 @@ export default function SightingDetail({data}: SightingDetailInput) {
 
     useEffect(() => {
         if(!data) return;
+        const satInfo = data.sightingData[2].satInfo;
+        if(!satInfo) return;
+
         const updateCountdown = () => {
           const currentDate = new Date();
           const currentTime = currentDate.getTime();
-          const timeDifference = data.sightingData[2].satInfo?.localTime.getTime() - currentTime;
+          const timeDifference = satInfo.localTime.getTime() - currentTime;
     
           if (timeDifference <= 0) {
             setCountdown('Already Passed');
