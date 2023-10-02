@@ -1,8 +1,46 @@
+# Spaze Tracker
+
+Spaze provides real-time tracking of the ISS on an interactive map.
+
+[![GitHub Stars](https://img.shields.io/github/stars/mosrainis/spaze-tracker.svg)](https://github.com/mosrainis/spaze-tracker/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/mosrainis/spaze-tracker.svg)](https://github.com/mosrainis/spaze-tracker/issues)
+[![GitHub Forks](https://img.shields.io/github/forks/mosrainis/spaze-tracker.svg)](https://github.com/mosrainis/spaze-tracker/network/members)
+
+## Table of Contents
+
+- [Project Description](#project-description)
+- [Demo](#demo)
+- [Features](#features)
+- [Installation](#installation)
+- [Contributing](#contributing)
+
+## Project Description
+
+Spaze provides real-time tracking of the ISS on an interactive map, enables users to observe the ISS using their geographic coordinates, enhancing their ability to spot the space station with the naked eye.
+
+## Demo
+
+Check it out [here](https://spaze-tracker.vercel.app/tracker)
+
+## Features
+
+List the key features of your project. Be sure to highlight what makes your project unique or useful.
+
+- Explore potential sighting opportunities by entering a location
+- Determine sightings locally without relying on a server
+- Identify precise opportunities for naked-eye observations
+- Responsive design, dark mode and PWA
+
+## Installation
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+```bash
+# Installation steps
+$ git clone https://github.com/yourusername/yourproject.git
+$ cd space-tracker
+$ npm install
+```
 
-## Getting Started
-
-First, run the development server:
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -14,21 +52,24 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Contributing
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+We welcome contributions from the community to improve and enhance **Spaze Tracker**. To get started, please follow these guidelines:
 
-## Learn More
+### How to Contribute
 
-To learn more about Next.js, take a look at the following resources:
+1. **Fork** the repository to your GitHub account.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Clone** your forked repository to your local machine:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+   ```bash
+   git clone https://github.com/mosrainis/spaze-tracker.git
+   ```
+3. Happy coding !
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Pull Request Guidelines
+- Follow the project's coding style and conventions.
+- Provide a clear and descriptive title for your PR.
+  
+Thank you for contributing to our project!
+If you have any questions or need assistance, feel free to reach out by creating an issue or contacting me through [email](mailto:mostafaes5520@gmail.com).
