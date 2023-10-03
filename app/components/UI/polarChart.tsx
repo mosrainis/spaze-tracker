@@ -27,8 +27,7 @@ export default function PolarChart({width, height, theta, radian}: PolarInput) {
               color: "#8090c7",
               symbol: "square",
               size: 8
-            },
-            subplot: "polar"
+            }
           }
         ]
       }
@@ -38,7 +37,6 @@ export default function PolarChart({width, height, theta, radian}: PolarInput) {
             // paper_bgcolor: '#c1c1c1',
             autosize: false,
             dragmode: false,
-            automargin: true,
             showlegend: false,
             polar: {
               radialaxis: {
