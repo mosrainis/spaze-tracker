@@ -5,6 +5,7 @@ const { Text, Title } = Typography;
 import { useState, useEffect } from "react";
 import { Sighting } from "../../models/satellite.model";
 import { millisecondsToFormattedTime } from "../../helpers/satelliteUtils";
+import PolarChart from "./UI/polarChart";
 
 interface SightingDetailInput {
     data: Sighting
@@ -128,6 +129,9 @@ export default function SightingDetail({data}: SightingDetailInput) {
                             value={`${data.sightingData[2].satInfo?.azimuth.toFixed(0)}\u00b0`}
                         />
                     </Col>
+                </Row>
+                <Row>
+                    <PolarChart />
                 </Row>
             </Modal>
         </>
