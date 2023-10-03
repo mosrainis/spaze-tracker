@@ -131,7 +131,7 @@ export default function SightingDetail({data}: SightingDetailInput) {
                     </Col>
                 </Row>
                 <Row>
-                    <PolarChart />
+                    <PolarChart width={400} height={400}/>
                 </Row>
             </Modal>
         </>

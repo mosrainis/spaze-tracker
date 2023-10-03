@@ -2,8 +2,12 @@ import React from 'react';
 import dynamic from "next/dynamic";
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
+interface PolarInput {
+  width: number,
+  height: number
+}
 
-export default function PolarChart() {
+export default function PolarChart({width, height}: PolarInput) {
 
   return (
     <Plot
@@ -13,7 +17,7 @@ export default function PolarChart() {
             type: "scatterpolar",
             mode: "lines+markers",
             r: [1,2,3,4,5],
-            theta: [0,90,180,360,0],
+            theta: [0,90],
             line: {
               color: "#ff66ab"
             },
@@ -28,14 +32,13 @@ export default function PolarChart() {
       }
         layout={
           {
+            width, height,
+            // paper_bgcolor: '#c1c1c1',
+            autosize: false,
             dragmode: false,
             automargin: true,
             showlegend: false,
             polar: {
-              domain: {
-                x: [0,0.4],
-                y: [0,1]
-              },
               radialaxis: {
                 tickfont: {
                   size: 8
@@ -43,7 +46,7 @@ export default function PolarChart() {
               },
               angularaxis: {
                 tickfont: {
-                  size: 8
+                  size: 10
                 },
                 direction: "clockwise"
               }
