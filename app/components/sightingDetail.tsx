@@ -4,7 +4,7 @@ import { Button, Modal, Row, Col, Space, Typography } from "antd";
 const { Text, Title } = Typography;
 import { useState, useEffect } from "react";
 import { Sighting } from "../../models/satellite.model";
-import { millisecondsToFormattedTime } from "../../helpers/satelliteUtils";
+import { millisecondsToFormattedTime, azimuthToCardinal, kilometersToRadians } from "../../helpers/satelliteUtils";
 import PolarChart from "./UI/polarChart";
 
 interface SightingDetailInput {
@@ -18,7 +18,8 @@ interface InfoItemInput {
 
 export default function SightingDetail({data}: SightingDetailInput) {
     const [countdown, setCountdown] = useState('');
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const title = `Sighting at ${data.startingTime.toISOString().split('T')[0]}`;
     useEffect(() => {
         if(!data) return;
         const satInfo = data.sightingData[2].satInfo;
@@ -42,10 +43,6 @@ export default function SightingDetail({data}: SightingDetailInput) {
         // Cleanup the interval when the component unmounts
         return () => clearInterval(intervalId);
     }, [data]);
-
-    const title = `Sighting at ${data.startingTime.toISOString().split('T')[0]}`;
-    
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -113,8 +110,8 @@ export default function SightingDetail({data}: SightingDetailInput) {
                 <Row gutter={[16, 16]} style={{marginBottom: 20}}>
                     <Col span={8} style={{textAlign: 'center'}}>
                         <InfoItem
-                            title="Satrt Direction"
-                            value={`${data.sightingData[0].satInfo?.azimuth.toFixed(0)}\u00b0`}
+                            title="Start Direction"
+                            value={`${azimuthToCardinal(data.sightingData[0].satInfo?.azimuth)}(${data.sightingData[0].satInfo?.azimuth.toFixed(0)}\u00b0)`}
                         />
                     </Col>
                     <Col span={8} style={{textAlign: 'center'}}>
@@ -126,12 +123,25 @@ export default function SightingDetail({data}: SightingDetailInput) {
                     <Col span={8} style={{textAlign: 'center'}}>
                         <InfoItem
                             title="End Direction"
-                            value={`${data.sightingData[2].satInfo?.azimuth.toFixed(0)}\u00b0`}
+                            value={`${azimuthToCardinal(data.sightingData[2].satInfo?.azimuth)}(${data.sightingData[2].satInfo?.azimuth.toFixed(0)}\u00b0)`}
                         />
                     </Col>
                 </Row>
                 <Row>
-                    <PolarChart width={400} height={400}/>
+                    <PolarChart
+                        width={472}
+                        height={400}
+                        theta={[
+                            data.sightingData[0].satInfo?.azimuth || 0,
+                            data.sightingData[1].satInfo?.azimuth || 0,
+                            data.sightingData[2].satInfo?.azimuth || 0
+                        ]}
+                        radian={[
+                            kilometersToRadians(data.sightingData[0].satInfo?.range, 420, 1500),
+                            kilometersToRadians(data.sightingData[1].satInfo?.range, 420, 1500),
+                            kilometersToRadians(data.sightingData[2].satInfo?.range, 420, 1500),
+                        ]}
+                    />
                 </Row>
             </Modal>
         </>

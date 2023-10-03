@@ -35,3 +35,39 @@ export function millisecondsToFormattedTime(milliseconds: number) {
   
     return formattedTime;
   }
+
+export function azimuthToCardinal(angle: number | undefined): string {
+    if(!angle) return '--';
+
+    const directions = [
+      "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+      "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
+    ];
+  
+    // Ensure the angle is between 0 and 360 degrees
+    angle = (angle + 360) % 360;
+  
+    // Calculate the index for the cardinal direction
+    const index = Math.round(angle / 22.5);
+  
+    return directions[index % 16];
+}
+
+export function kilometersToRadians(distanceKm: number | undefined, minDistanceKm: number | undefined, maxDistanceKm: number | undefined): number {
+    if(!distanceKm || !minDistanceKm || !maxDistanceKm) return 0;
+    // Ensure the input distance is within the specified range
+    if (distanceKm < minDistanceKm) {
+      distanceKm = minDistanceKm;
+    } else if (distanceKm > maxDistanceKm) {
+      distanceKm = maxDistanceKm;
+    }
+  
+    // Calculate the range of radians (in this case, from 0 to Math.PI)
+    const minRadians = 0;
+    const maxRadians = Math.PI;
+  
+    // Perform linear interpolation to convert distance to radians
+    const radians = ((distanceKm - minDistanceKm) / (maxDistanceKm - minDistanceKm)) * (maxRadians - minRadians);
+  
+    return radians;
+  }

@@ -3,21 +3,23 @@ import dynamic from "next/dynamic";
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
 interface PolarInput {
-  width: number,
-  height: number
+  width:  number,
+  height: number,
+  theta:  number[],
+  radian: number[]
 }
 
-export default function PolarChart({width, height}: PolarInput) {
+export default function PolarChart({width, height, theta, radian}: PolarInput) {
 
   return (
     <Plot
       data={
         [
           {
+            theta,
+            r: radian,
             type: "scatterpolar",
             mode: "lines+markers",
-            r: [1,2,3,4,5],
-            theta: [0,90],
             line: {
               color: "#ff66ab"
             },
