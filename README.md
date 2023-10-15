@@ -33,7 +33,7 @@ List the key features of your project. Be sure to highlight what makes your proj
 - Responsive design, dark mode and PWA
 
 ## Tasks List
-- [ ] Enhance user interface for polar coordinate system
+- [x] Enhance user interface for polar coordinate system
 - [ ] Improve Observation Calculation to achieve a higher level of precision and accuracy
 - [ ] Disable the loop behavior on the Leaflet map view to prevent infinite navigation
 - [ ] Improve mobile user experience
