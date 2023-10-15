@@ -11,6 +11,7 @@ Spaze provides real-time tracking of the ISS on an interactive map.
 - [Project Description](#project-description)
 - [Demo](#demo)
 - [Features](#features)
+- [Tasks List](#tasks-list)
 - [Installation](#installation)
 - [Contributing](#contributing)
 
@@ -31,6 +32,11 @@ List the key features of your project. Be sure to highlight what makes your proj
 - Identify precise opportunities for naked-eye observations
 - Responsive design, dark mode and PWA
 
+## Tasks List
+- [ ] Enhance user interface for polar coordinate system
+- [ ] Improve Observation Calculation to achieve a higher level of precision and accuracy
+- [ ] Disable the loop behavior on the Leaflet map view to prevent infinite navigation
+- [ ] Improve mobile user experience
 ## Installation
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 ```bash
