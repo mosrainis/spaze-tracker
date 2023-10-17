@@ -50,7 +50,7 @@ export default function PolarChart({width, height, theta, radian}: PolarInput) {
             showlegend: false,
             polar: {
               radialaxis: {
-                tickvals: [0, 1, 2],
+                tickvals: [0, 1.3, 2.3],
                 tickfont: {
                   size: 8
                 },
