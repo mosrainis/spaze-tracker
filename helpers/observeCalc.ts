@@ -8,11 +8,15 @@ import { dot } from 'mathjs';
 import { getDuration } from "./satelliteUtils";
 
 declare const A: any; //From meeujs lib
-interface ObserveDateRange { start: Date, end: Date };
+interface ObserveDateRange { start: Date; end: Date };
+interface SightingScopeInput { currentTime: number; shiftLength: number; observeCoords: ReferencePosition; satrec: SatRec}
 
-const tau = 2 * Math.PI;
-const RAD2DEG = 360 / tau;
-const DEG2RAD = tau / 360;
+const tau: number = 2 * Math.PI;
+const RAD2DEG: number = 360 / tau;
+const DEG2RAD: number = tau / 360;
+const MIN_SIGHT_ELV: number = 10;
+const ISS_LOOP_MS: number = 75*60000 // Equal to 90min
+
 
 export function getSightings(satrec: SatRec, observeCoords: ReferencePosition): Sighting[] {
   let date = new Date();
@@ -22,7 +26,7 @@ export function getSightings(satrec: SatRec, observeCoords: ReferencePosition): 
   for (let i = 0; i < TRACKER_CONSTSNTS.OBSERVE_RANGE_DAY; i++) {
     observeRange = calcSunTime(observeCoords.latitude, observeCoords.longitude, date);
     date.setDate(date.getDate() + 1);
-    const opp = calcLocalSatPos(satrec, observeRange, observeCoords);
+    const opp = calcLocalSatPos(satrec, observeRange, observeCoords);    
     if(opp) {sightings.push(opp);}
   }
 
@@ -31,14 +35,15 @@ export function getSightings(satrec: SatRec, observeCoords: ReferencePosition): 
 
 function calcSunTime(siteLat: number, siteLong: number, date: Date): ObserveDateRange {
   const dayAfter = new Date(date.getTime());
+  
   dayAfter.setDate(dayAfter.getDate() + 1);   
 
   const sunTime = getTimes(date, siteLat, siteLong);
   const sunTimeDayAfter = getTimes(dayAfter, siteLat, siteLong);
 
   return {
-    start: sunTime.dusk,
-    end: sunTimeDayAfter.dawn
+    start: sunTime.sunset,
+    end: sunTimeDayAfter.sunriseEnd
   };
 
   // for (let i = 0; i < this.numberOfPoints; i++) {
@@ -49,22 +54,14 @@ function calcSunTime(siteLat: number, siteLong: number, date: Date): ObserveDate
 }
 
 function calcLocalSatPos(satrec: SatRec, observeRange: ObserveDateRange, observeCoords: ReferencePosition): Sighting | undefined  {    
-  const dt = Math.trunc((observeRange.end.getTime() - observeRange.start.getTime()) / 450);
-  let innerDt: number = 1000;
   let currentTime = observeRange.start.getTime();
   let currentSatData: SatelliteCoord;
-  let maxElevation: number = 0;
-  let maxRange: number = 0;
-  
-  let innerRangeMarker: number;
-  let maxInnerRange: number;
-  let preElv: number = 0;
-  let preCheckedRange;
-    
-  let sighting = [];
   let sightingOpp: Sighting | undefined = undefined;
-    
-  // Set the loop range from 'dusk' to 'dawn' 
+
+  const dt = Math.trunc((observeRange.end.getTime() - observeRange.start.getTime()) / 450);
+  
+  let preElv: number = 0;
+
   while (currentTime < observeRange.end.getTime()) {
     currentSatData = getCoordination(satrec, {
       sighting: true,
@@ -72,95 +69,107 @@ function calcLocalSatPos(satrec: SatRec, observeRange: ObserveDateRange, observe
       date: new Date(currentTime),
     });
 
-    if(!currentSatData || !currentSatData.satInfo) return;
-
-    // console.log(`======||||||||||||||=======${currentSatData[2].localTime}==(elv : ${currentSatData[2].elevation})=====|||||||||||||===========`);
-    // Check if satellite if It's above the observer horizon (10 degree above horizon)
-    if (currentSatData.satInfo.elevation > 10) {
-      // console.log(`=============${currentSatData[2].localTime}=========(elv : ${currentSatData[2].elevation})=========`);
+    if((currentSatData.satInfo?.elevation as number) >= MIN_SIGHT_ELV) {
+      preElv = currentSatData.satInfo?.elevation as number;
+      const sightingData = processSightingScope({
+        currentTime,
+        observeCoords,
+        satrec,
+        shiftLength: dt
+      });
+      currentTime = sightingData.newCurrentTime;
       
-      preElv = currentSatData.satInfo.elevation;
-      innerRangeMarker = currentTime - dt;
-      maxInnerRange = currentTime + dt;
-      
-      if (preCheckedRange != currentTime) {
-        // console.log(`ok current is not equal to preRange`);
-        
-        preCheckedRange = maxInnerRange;
-        
-        // Set the loop range from 'previous time' to 'next time' 
-        while (innerRangeMarker < maxInnerRange) {
-          
-          currentSatData = getCoordination(satrec, {
-            sighting: true,
-            sightingData: observeCoords,
-            date: new Date(innerRangeMarker)
-          });
-
-          if(!currentSatData || !currentSatData.satInfo) return;
-
-          // console.log(`---------CHECKing ${currentSatData[2].localTime}----elv : (${currentSatData[2].elevation})------`);
-          if (currentSatData.satInfo.elevation > 10) {
-            // console.log(`ok elv is MORE than 10`);
-            
-            if (sighting.length == 0 && isSunlit(currentSatData)) {
-              // console.log(`ok catch the FIRST sighting`);
-              sighting.push(currentSatData);              
-            }
-            // Set the max elevation to whatever is more than previous max value
-            if (sighting.length != 0 ) {
-              if (maxElevation < currentSatData.satInfo.elevation) {
-                // console.log(`ok catch MAX elv`);
-                maxElevation = currentSatData.satInfo.elevation;
-                maxRange = currentSatData.satInfo.range;
-                if (sighting.length > 1) {
-                  // console.log(`POP action`);
-                  sighting.pop();
-                }
-                sighting.push(currentSatData);
-              }
-              if (!isSunlit(currentSatData)) {
-                // console.log(`ok catch MAX as LAST -- BREAK`);
-                sighting.push(currentSatData);
-                sightingOpp = submitSighting(sighting, maxElevation, maxRange);
-                
-                sighting = [];
-                maxElevation = 0;
-                maxRange = 0
-                innerRangeMarker = maxInnerRange;
-              }  
-              // console.log(`size of array is ${sightingData.length}`);
-                              
-            }
-          }
-          else if (sighting.length != 0 && (currentSatData.satInfo.elevation < 10 || innerRangeMarker+innerDt>maxInnerRange)) {
-            // console.log(`NOT ok elv is LESS more than 10 -- PUSH TO SIGHTINGOPP`);
-            sighting.push(currentSatData);              
-            sightingOpp = submitSighting(sighting, maxElevation, maxRange);
-            maxElevation = 0;
-            maxRange = 0;
-            sighting = [];
-            innerRangeMarker = maxInnerRange;
-          }
-          innerRangeMarker += innerDt;
-        }
+      if(sightingData.sighting.length !== 0) {
+        sightingOpp = submitSighting(sightingData.sighting, sightingData.elv, sightingData.range);
       }
-    }
-    else if (preElv > 10 && currentSatData.satInfo.elevation < 10) {
+    } else if(
+      currentSatData.satInfo?.elevation as number < MIN_SIGHT_ELV
+      && preElv > MIN_SIGHT_ELV
+    ) {
       preElv = 0;
-      currentTime += 75*60000;
+      currentTime += ISS_LOOP_MS;
     }
+
     currentTime += dt;
   }
-  // console.log('sightingOpp', sightingOpp);
-  
+
   return sightingOpp;
 }
 
-function isSunlit(sat: SatelliteCoord, needPhaseAngle?: boolean) {
+function processSightingScope({ currentTime, shiftLength, observeCoords, satrec}: SightingScopeInput): {
+  newCurrentTime: number;
+  sighting: SatelliteCoord[];
+  elv: number;
+  range: number;
+}{
+  let  sightingArray: SatelliteCoord[] = [];
+  let currentSatData: SatelliteCoord;
+  let innerRangeMarker: number = currentTime - shiftLength;
+  let maxInnerRange: number = currentTime;
+  let dt: number = 1000; // equal to 1second
+
+  let maxElevation: number = 0;
+  let maxRange: number = 0;
+
+  while (innerRangeMarker < maxInnerRange) {
+    currentSatData = getCoordination(satrec, {
+      sighting: true,
+      sightingData: observeCoords,
+      date: new Date(innerRangeMarker)
+    });
+    
+    if ((currentSatData.satInfo?.elevation as number) >= MIN_SIGHT_ELV) {
+
+      // Catch the FISRT sighting
+      if (sightingArray.length === 0) {
+        if(isSunlit(currentSatData, innerRangeMarker)) {
+          // console.log(' ---> first', currentSatData.satInfo?.localTime);
+          sightingArray.push(currentSatData);
+        }
+      } else {
+        // Catch the MAX sighting
+        if (maxElevation < (currentSatData.satInfo?.elevation as number)) {
+          maxElevation = currentSatData.satInfo?.elevation as number;
+          maxRange = currentSatData.satInfo?.range as number;
+          (sightingArray.length > 1) && sightingArray.pop();
+          sightingArray.push(currentSatData);
+        }
+        // Catch the LAST sighting
+        if(!isSunlit(currentSatData, innerRangeMarker)) {
+          // console.log('--- last --- (NOT sun-lit)');
+          sightingArray.push(currentSatData);
+          innerRangeMarker = maxInnerRange;
+          continue;
+        }
+
+        // Need to expand range to find the LAST sighting
+        if(innerRangeMarker+dt > maxInnerRange) {
+          maxInnerRange += dt;
+        }
+      }
+    } else {
+      // Catch the LAST sighting (Elevation too low)
+      if(sightingArray.length !== 0) {
+        sightingArray.push(currentSatData);
+        innerRangeMarker = maxInnerRange;
+      }
+    }
+    
+    innerRangeMarker += dt;
+  }
+
+  return {
+    newCurrentTime: maxInnerRange,
+    sighting: sightingArray,
+    elv: maxElevation,
+    range: maxRange
+  }
+}
+
+function isSunlit(sat: SatelliteCoord, timeMs: number, needPhaseAngle?: boolean) {
   if(!sat.satXYZ) return false;
 
-  var sunECI = getSunXYZ();
+  var sunECI = getSunXYZ(timeMs);
 
   var semiDiamEarth = Math.asin(6371/Math.sqrt(Math.pow(-sat.satXYZ.x, 2) + Math.pow(-sat.satXYZ.y, 2) + Math.pow(-sat.satXYZ.z, 2))) * RAD2DEG;
   var semiDiamSun = Math.asin(6371/Math.sqrt(Math.pow(-sat.satXYZ.x + sunECI.x, 2) + Math.pow(-sat.satXYZ.y + sunECI.y, 2) + Math.pow(-sat.satXYZ.z + sunECI.z, 2))) * RAD2DEG;
@@ -199,8 +208,10 @@ function isSunlit(sat: SatelliteCoord, needPhaseAngle?: boolean) {
   return true;
 };
 
-function getSunXYZ() {
-  const now = new Date();
+function getSunXYZ(currentTime: number) {
+  // const now = new Date();  
+  const now = new Date(currentTime);
+  
   let j = jday(now.getUTCFullYear(),
                now.getUTCMonth() + 1,
                now.getUTCDate(),
@@ -283,13 +294,6 @@ function calcMagnitude(phaseAngle: any, satRange: number) {
 
 function submitSighting(data: SatelliteCoord[], elv: number, range: number): Sighting {
   
-  const sighting = [
-    [data[0].satInfo?.localTime, `Lat: ${data[0].lat} - Long: ${data[0].long}`],
-    [data[0].satInfo?.time, data[2].satInfo?.time],
-    [`Azimuth: ${data[0].satInfo?.azimuth} --> ${data[2].satInfo?.azimuth}`, `Elevation: ${data[0].satInfo?.elevation} --> ${data[2].satInfo?.elevation}`]
-  ];
-
-  console.table(sighting);
   return {
     startingTime: data[0].satInfo?.localTime,
     maxElv: elv,
@@ -300,6 +304,7 @@ function submitSighting(data: SatelliteCoord[], elv: number, range: number): Sig
     mag: calcMagnitude(
       isSunlit(
         data[0],
+        data[1].satInfo?.localTime.getTime() as number,
         true
       ),
       range
