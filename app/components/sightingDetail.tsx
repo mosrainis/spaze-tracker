@@ -91,19 +91,19 @@ export default function SightingDetail({data}: SightingDetailInput) {
                     <Col span={8} style={{textAlign: 'center'}}>
                         <InfoItem
                             title="Start elev."
-                            value={`${data.sightingData[0].satInfo?.elevation.toFixed(0)}\u00b0`}
+                            value={`${data.sightingData[0].satInfo?.elevation.toFixed(1)}\u00b0`}
                         />
                     </Col>
                     <Col span={8} style={{textAlign: 'center'}}>
                         <InfoItem
                             title="Max elev."
-                            value={`${data.maxElv.toFixed(0)}\u00b0`}
+                            value={`${data.maxElv.toFixed(1)}\u00b0`}
                         />
                     </Col>
                     <Col span={8} style={{textAlign: 'center'}}>
                         <InfoItem
                             title="End Elev."
-                            value={`${data.sightingData[2].satInfo?.elevation.toFixed(0)}\u00b0`}
+                            value={`${data.sightingData[2].satInfo?.elevation.toFixed(1)}\u00b0`}
                         />
                     </Col>
                 </Row>
