@@ -137,9 +137,9 @@ export default function SightingDetail({data}: SightingDetailInput) {
                             data.sightingData[2].satInfo?.azimuth || 0
                         ]}
                         radian={[
-                            kilometersToRadians(data.sightingData[0].satInfo?.range, 420, 1500),
-                            kilometersToRadians(data.sightingData[1].satInfo?.range, 420, 1500),
-                            kilometersToRadians(data.sightingData[2].satInfo?.range, 420, 1500),
+                            kilometersToRadians(data.sightingData[0].satInfo?.range, 410, 1600),
+                            kilometersToRadians(data.sightingData[1].satInfo?.range, 410, 1600),
+                            kilometersToRadians(data.sightingData[2].satInfo?.range, 410, 1600),
                         ]}
                     />
                 </Row>
